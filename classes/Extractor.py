@@ -12,6 +12,9 @@ class Extractor:
         self.texts_list = []
         self.total_texts = 0
 
+        self.name = ''
+        self.description = ''
+
     # pega todas as pastas do tipo de objeto
     def get_folders(self, lang, version, type_object):
         os.chdir(cwd + "\\game_files\\" + lang + "\\" + version + "\\scripts\\" + type_object)
@@ -35,12 +38,13 @@ class Extractor:
         i = 0
         while len(lines) > i:
             if lines[i].find('this.m.Name = "') == 2:
-                name = lines[i][lines[i].find('= "') + 3:lines[i].find('";')]
-                print(name)
+                self.name = lines[i][lines[i].find('= "') + 3:lines[i].find('";')]
+                # print(name)
             if lines[i].find('this.m.Description = "') == 2:
-                description = lines[i][lines[i].find('= "') + 3:lines[i].find('";')]
-                print(description)
+                self.description = lines[i][lines[i].find('= "') + 3:lines[i].find('";')]
+                # print(description)
             i += 1
+        return self.name, self.description
 
     # conta todos os textos do jogo
     def count_texts(self):
