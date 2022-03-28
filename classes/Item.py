@@ -48,6 +48,10 @@ class Item:
     def get_full_text(self):
         pass
 
+    # Insere o texto traduzido no conteudo antigo
+    def insert_translate_text(self):
+        pass
+
     # Cria uma nova pasta
     def create_folder(self):
         if not os.path.exists(cwd + "\\game_files\\" + LAGUAGE + "\\" + VERSION + "\\scripts\\items\\" + self.folder):
@@ -59,3 +63,7 @@ class Item:
     # Escreve um novo arquivo
     def write_file(self):
         self.create_folder()
+
+        with open(cwd + "\\game_files\\" + LAGUAGE + "\\" + VERSION + "\\scripts\\items\\" + self.folder, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+
