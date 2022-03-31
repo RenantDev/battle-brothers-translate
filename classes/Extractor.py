@@ -46,6 +46,3 @@ class Extractor:
             i += 1
         return self.name, self.description
 
-    # conta todos os textos do jogo
-    def count_texts(self):
-        pass

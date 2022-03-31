@@ -3,9 +3,11 @@ import shutil
 
 from config import VERSION, LAGUAGE
 from classes.Extractor import Extractor
+from classes.Translate import Translate
 
-# inicia variaveis do sistema
+# inicia variaveis
 cwd = os.getcwd()
+translate = Translate()
 
 
 # Tradução de itens do jogo
@@ -21,6 +23,8 @@ class Item:
         self.file_texts = ''
         self.name = ''
         self.description = ''
+
+        self.data_file = ''
 
     # Busca as pastas
     def find_folders(self):
@@ -46,7 +50,7 @@ class Item:
 
     # Pega todos os textos do arquivo
     def get_full_text(self):
-        pass
+        self.data_file = open(cwd + "\\game_files\\en\\" + VERSION + "\\scripts\\items\\" + self.folder + "\\" + self.file, "r")
 
     # Insere o texto traduzido no conteudo antigo
     def insert_translate_text(self):
@@ -54,16 +58,34 @@ class Item:
 
     # Cria uma nova pasta
     def create_folder(self):
-        if not os.path.exists(cwd + "\\game_files\\" + LAGUAGE + "\\" + VERSION + "\\scripts\\items\\" + self.folder):
-            os.makedirs(cwd + "\\game_files\\" + LAGUAGE + "\\" + VERSION + "\\scripts\\items\\" + self.folder)
-        else:
-            shutil.rmtree(cwd + "\\game_files\\" + LAGUAGE + "\\" + VERSION + "\\scripts\\items\\" + self.folder)
-            os.makedirs(cwd + "\\game_files\\" + LAGUAGE + "\\" + VERSION + "\\scripts\\items\\" + self.folder)
+        shutil.rmtree(cwd + "\\game_files\\pt\\" + VERSION)
+
+        en_version = cwd + "\\game_files\\en\\" + VERSION
+        pt_version = cwd + "\\game_files\\pt\\" + VERSION
+        shutil.copytree(en_version, pt_version)
+
+
 
     # Escreve um novo arquivo
     def write_file(self):
-        self.create_folder()
+        with open(cwd + "\\game_files\\" + LAGUAGE + "\\" + VERSION + "\\scripts\\items\\" + self.folder + "\\" + self.file, 'w', encoding='utf-8') as f:
+            for line in self.data_file:
+                if line.find('this.m.Name = "') == 2:
+                    f.write(f'		this.m.Name = "{self.name}";\n')
+                elif line.find('this.m.Description = "') == 2:
+                    f.write(f'		this.m.Description = "{self.description}";\n')
+                else:
+                    f.write(line)
 
-        with open(cwd + "\\game_files\\" + LAGUAGE + "\\" + VERSION + "\\scripts\\items\\" + self.folder, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
+    def translate(self):
+        self.name = self.find_name()
+        self.description = self.find_description()
+
+        self.name = translate.translate(self.name)
+        self.description = translate.translate(self.description)
+
+    def write_new_file(self):
+        self.get_full_text()
+        # self.create_folder()
+        self.write_file()
 
