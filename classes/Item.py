@@ -8,6 +8,7 @@ from classes.Translate import Translate
 # inicia variaveis
 cwd = os.getcwd()
 translate = Translate()
+extractor = Extractor()
 
 
 # Tradução de itens do jogo
@@ -88,4 +89,46 @@ class Item:
         self.get_full_text()
         # self.create_folder()
         self.write_file()
+
+    def translate_items(self):
+        # item.create_folder()
+        folders = extractor.get_folders('en', VERSION, 'items')
+        i = 0
+        while len(folders) > i:
+            # pegar as sub pastas
+            sub_folders = extractor.get_folders('en', VERSION, 'items\\' + folders[i])
+            if len(sub_folders) > 0:
+                x = 0
+                while len(sub_folders) > x:
+                    sub_files_list = extractor.get_files('en', VERSION, 'items\\' + folders[i] + sub_folders[x])
+                    y = 0
+                    while len(sub_files_list) > y:
+                        texts = extractor.get_item_texts('en', VERSION, folders[i] + '\\' + sub_folders[x], sub_files_list[y])
+
+                        self.file = sub_files_list[y]
+                        self.folder = folders[i] + sub_folders[x]
+
+                        self.name = str(texts[0])
+                        self.description = str(texts[1])
+                        self.translate()
+                        self.write_new_file()
+                        print(self.name)
+                        y += 1
+                    x += 1
+                # pegar a lista de arquivos da pasta
+                files_list = extractor.get_files('en', VERSION, 'items\\' + folders[i])
+                k = 0
+                while len(files_list) > k:
+                    texts = extractor.get_item_texts('en', VERSION, folders[i], files_list[k])
+
+                    self.file = files_list[k]
+                    self.folder = folders[i]
+
+                    self.name = str(texts[0])
+                    self.description = str(texts[1])
+                    self.translate()
+                    self.write_new_file()
+                    print(self.name)
+                    k += 1
+            i += 1
 
